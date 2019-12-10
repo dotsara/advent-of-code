@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2019 Advent of Code: Day 2</title>
+</head>
+<body>
+	<h1>Day 2: 1202 Program Alarm</h1>
+<style>
+
+</style>
+<script>
+	console.log(`👩🏽‍💻 Fixing exploded computers…`);
+	
+	const intcode = [
+		1,0,0,3,
+		1,1,2,3,
+		1,3,4,3,
+		1,5,0,3,
+		2,1,6,19,
+		1,9,19,23,
+		2,23,10,27,
+		1,27,5,31,
+		1,31,6,35,
+		1,6,35,39,
+		2,39,13,43,
+		1,9,43,47,
+		2,9,47,51,
+		1,51,6,55,
+		2,55,10,59,
+		1,59,5,63,
+		2,10,63,67,
+		2,9,67,71,
+		1,71,5,75,
+		2,10,75,79,
+		1,79,6,83,
+		2,10,83,87,
+		1,5,87,91,
+		2,9,91,95,
+		1,95,5,99,
+		1,99,2,103,
+		1,103,13,0,
+		99,
+		2,14,0,0
+	];
+	// countPrograms(intcode);
+
+    function fixComputer(array) {
+        let lastOpcode = 0;
+        let currentProgram = [];
+        let stopCode = 99;
+
+        // walk through the array and do some work
+        // array.forEach((item, index) => {
+        //     console.log(`**** inside the array at position ${index} with item ${item} ****`);
+        //     // first program
+        //     if (index === 0) {
+        //         currentProgram = [array[lastOpcode], array[lastOpcode+1], array[lastOpcode+2], array[lastOpcode+3]];
+        //         console.log(`currentProgram: ${currentProgram}`);
+        //
+        //         // reset lastOpcode
+        //         console.log(`lastOpcode is currently: ${lastOpcode}`);
+        //         lastOpcode = lastOpcode+4;
+        //         console.log(`lastOpcode is now: ${lastOpcode}`);
+        // } else if ((index % 4 === 0) && item === 99) {
+        //       console.log(`STOP`);
+        // } else if (index % 4 === 0) {
+        //             console.log(`okay, you're now at position: ${index} with value: ${item}`);
+        //             currentProgram = [array[lastOpcode], array[lastOpcode+1], array[lastOpcode+2], array[lastOpcode+3]];
+        //             console.log(`currentProgram: ${currentProgram}`);
+        //
+        //             // reset lastOpcode
+        //             console.log(`lastOpcode is currently: ${lastOpcode}`);
+        //             lastOpcode = lastOpcode+4;
+        //             console.log(`lastOpcode is now: ${lastOpcode}`);
+        //         }
+        // })
+    }
+
+    // doing the program work
+    function intcodeProgram(array) {
+        let result = 0;
+        let position1 = array[array[1]];
+        let position2 = array[array[2]];
+
+        if (array[0] === 1) {
+            result = position1 + position2;
+            array[3] = result;
+        } else if (array[0] === 2) {
+            result = position1 * position2;
+            array[0] = result;
+        } else if (array[0] === 99) {
+            return;
+        }
+    }
+	
+</script>
+</body>
+</html>
+
