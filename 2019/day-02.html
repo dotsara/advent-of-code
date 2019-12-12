@@ -11,9 +11,17 @@
 </style>
 <script>
 	console.log(`👩🏽‍💻 Fixing exploded computers…`);
-	
-	const intcode = [
-		1,0,0,3,
+
+	// initial intcode values:
+    // 1,0,0,3,1,1,2,3,1,3,4,3,1,5,0,3,2,1,6,19,1,9,19,23,2,23,10,27,1,27,5,31,1,31,6,35,1,6,35,39,2,39,13,43,1,9,43,47,2,9,47,51,1,51,6,55,2,55,10,59,1,59,5,63,2,10,63,67,2,9,67,71,1,71,5,75,2,10,75,79,1,79,6,83,2,10,83,87,1,5,87,91,2,9,91,95,1,95,5,99,1,99,2,103,1,103,13,0,99,2,14,0,0
+
+    // intcode below has position 1 with a new value of 12 and position 2
+    // with a new value of 2
+    // so the first program started as: 1, 0, 0, 3
+    // but now it's 1, 12, 2, 3
+
+    const intcode = [
+		1,12,2,3,
 		1,1,2,3,
 		1,3,4,3,
 		1,5,0,3,
@@ -43,7 +51,47 @@
 		99,
 		2,14,0,0
 	];
-	// countPrograms(intcode);
+
+    function countProgramsBeforeHaltCode(array) {
+      let count = 0;
+      let lastOpcode = 0;
+      let currentProgram = [];
+
+      // idea, but unsure how to make it work array.reduce(something => something, 0);
+
+      array.forEach((item, index) => {
+        if (index === 0 && item !== 99) {
+          console.log(`first program and it's not opcode 99!`);
+          currentProgram = [array[lastOpcode], array[lastOpcode+1], array[lastOpcode+2], array[lastOpcode+3]];
+          console.log(`current program: ${currentProgram}`);
+
+          // intcodeProgram(currentProgram); ????
+          intcodeProgram(currentProgram);
+          console.log(`current program is now: ${currentProgram}`);
+
+          lastOpcode = lastOpcode+4;
+          count++
+        } else if (index % 4 === 0) {
+          if (item !== 99 && item === 1 || item === 2) {
+            console.log(`program starts with a 1 or 2 (${item}) at position #${index}`);
+            currentProgram = [array[lastOpcode], array[lastOpcode+1], array[lastOpcode+2], array[lastOpcode+3]];
+            console.log(`current program: ${currentProgram}`);
+
+            intcodeProgram(currentProgram);
+            if (item === 1) {
+              console.log(`current program is now: ${currentProgram}`);
+            }
+            lastOpcode = lastOpcode+4;
+            count++
+          } else if (item === 99) {
+            console.log(`we hit a halt code at position #${index}`);
+          }
+        }
+      })
+
+      console.log(`the total # of programs in intcode is: ${count}`);
+      // return count;
+    }
 
     function fixComputer(array) {
         let lastOpcode = 0;
@@ -80,20 +128,79 @@
     // doing the program work
     function intcodeProgram(array) {
         let result = 0;
-        let position1 = array[array[1]];
-        let position2 = array[array[2]];
+        let position1 = intcode[array[1]];
+        let position2 = intcode[array[2]];
 
         if (array[0] === 1) {
-            result = position1 + position2;
-            array[3] = result;
+            // console.log(`program starts with ${array[0]}, so we add`);
+            // result = position1 + position2;
+            // array[3] = result;
+
+
+          console.log(`okay, starts with a 1: ${array}`);
+          console.log(`current array[1] is: ${array[1]} and that position's value in intcode is: ${intcode[array[1]]}?`);
+          console.log(`current array[2] is: ${array[2]} and that position's value in intcode is: ${intcode[array[2]]}?`);
+          console.log(`so: ${intcode[array[1]]} + ${intcode[array[2]]} is: ${intcode[array[1]] + intcode[array[2]]}`);
+          // console.log(`program starts with ${array[0]}, so we multiply`);
+          result = position1 + position2;
+          console.log(`is "result" the same? ${result}`);
+          // array[3] = result;
+          /*
+            ooohh, I misread the instructions! position [3] is the position
+            at which I store result! *facepalm*
+          */
+
+          console.log(`intcode[array[3]] is currently: ${intcode[array[3]]} and we're going to update it to: ${result}`);
+          intcode[array[3]] = result;
+          console.log(`current array is now: ${array}`);
         } else if (array[0] === 2) {
+
+            /*
+                since it starts with a 2, I need to get the values at positions
+                1 and 2 of the source array (intcode) and multiple *those*
+             */
+
+            console.log(`okay, starts with a 2: ${array} #### intcode[0] is currently: ${intcode[0]}`);
+            console.log(`current array[1] is: ${array[1]} and that position's value in intcode is: ${intcode[array[1]]}?`);
+            console.log(`current array[2] is: ${array[2]} and that position's value in intcode is: ${intcode[array[2]]}?`);
+            console.log(`so: ${intcode[array[1]]} * ${intcode[array[2]]} is: ${intcode[array[1]] * intcode[array[2]]}`);
+            // console.log(`program starts with ${array[0]}, so we multiply`);
             result = position1 * position2;
-            array[0] = result;
-        } else if (array[0] === 99) {
-            return;
+            console.log(`is "result" the same? ${result}`);
+
+            // array[0] = result
+            // re-reading the instructions: whups! supposed to update
+            // intcode[0], not array[0]
+            console.log(`intcode[0] was ${intcode[0]} and we're going to update it to: ${result}`);
+            intcode[0] = result;
+            console.log(`See??? intcode[0] is now: ${intcode[0]}`);
+
+            // console.log(`current array is now: ${array}`);
         }
+        // don't need this anymore: countProgramsBeforeHaltCode doesn't
+        // even use intcodeProgram if 99 pops up
+        // else if (array[0] === 99) {
+        //     return;
+        // }
     }
-	
+
+    console.info(`So before we fix the computer, the value at position 0 is: ${intcode[0]}`);
+    countProgramsBeforeHaltCode(intcode);
+    console.info(`The computer is fixed! The value at position 0 is now: ${intcode[0]}`);
+
+    /*
+        After updating intcodeProgram to update intcode[0] when the program starts with 2,
+        the result I got for the updated value at intcode[0] was 273.
+
+        The site says that's not the right answer. Trying again.
+
+        Attempt #2: I had opcode-1 programs not storing their results in
+        the right location which is intcode[array[3]]!
+
+        Second answer was 103 and that's still wrong, so I'm still missing
+        something…Trying again!
+        
+     */
 </script>
 </body>
 </html>
